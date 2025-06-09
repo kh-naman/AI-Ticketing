@@ -1,16 +1,16 @@
 import { NonRetriableError } from 'inngest'
-import user from '../../models/user.js'
+import User from '../../models/user.js'
 import {inngest} from '../client.js'
-import { sendMail } from '../../models/utils/mailer.js'
+import { sendMail } from '../../utils/mailer.js'
 
-inngest.createFunction(
-    { id: "on-signup" },
+export const onUserSignup = inngest.createFunction(
+    { id: "on-signup", retries: 2 },
     { event: "user/signup" },
     async ({event,step}) => {
         try {
             const {email} = event.data
             const user = await step.run("get-user-from-email",async() => {
-                const userObject = user.findOne({email})
+                const userObject = User.findOne({email})
                 if(!userObject)
                 {
                     throw new NonRetriableError("User no longer exist in our db")
