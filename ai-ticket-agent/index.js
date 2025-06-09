@@ -14,7 +14,7 @@ app.use(express.json())
 
 dotenv.config();
 
-app.use("/api/users",userRoutes)
+app.use("/api/auth",userRoutes)
 
 mongoose
         .connect(process.env.MONGO_URI)
