@@ -20,7 +20,7 @@ export const onTicketCreated = inngest.createFunction(
     async ({event,step}) => {
         try {
         const {ticketId} = event.data
-
+        
         const ticket = await step.run("get-ticket-from-ticketId",async() => {
             const ticketObject = await Ticket.findById(ticketId)
 
@@ -30,15 +30,18 @@ export const onTicketCreated = inngest.createFunction(
             }
             return ticketObject
         })
-
+        // console.log("Step get-ticket-from-ticketId done");
         await step.run("change-ticket-status",async()=>{
             await Ticket.findByIdAndUpdate(ticket._id,{status: "TODO"})
         })
-
-        const aiResponse = await step.run("get-ticket-info-from-AI",async() => {
-            await analyzeTicket(ticket)
-        })
+        // console.log("Step change-ticket-status done");
         
+        // const aiResponse = await step.run("get-ticket-info-from-AI",async() => {
+        //     return await analyzeTicket(ticket)
+        // })
+        const aiResponse = await analyzeTicket(ticket);
+        // const aiResponse = await analyzeTicket(ticket);
+        // console.log("Step get-ticket-info-from-AI done");
         //    sample aiResponse 
         //     {
         //     "summary": "Short summary of the ticket",
@@ -47,10 +50,11 @@ export const onTicketCreated = inngest.createFunction(
         //     "relatedSkills": ["React", "Node.js"]
         //     }
 
+        // console.log("before ai processing");
         const relatedSkills = await step.run("ai-processing", async () => {
             let skills = [];
             if (aiResponse) {
-            await Ticket.findByIdAndUpdate(ticket, {
+            await Ticket.findByIdAndUpdate(ticket._id, {
                 priority: !["low", "medium", "high"].includes(aiResponse.priority)
               ? "medium"
               : aiResponse.priority,
@@ -63,7 +67,7 @@ export const onTicketCreated = inngest.createFunction(
             return skills
         })
             
-
+        // console.log("before assinging moderator");
         const moderator = await step.run("assigning-moderator",async() => {
             let user = await User.findOne({
                 role: "moderator",
@@ -74,20 +78,24 @@ export const onTicketCreated = inngest.createFunction(
                     }
                 }
             })
-
+            // console.log("userrr",user);
+            
             if (!user) {
+            // console.log("No moderator found, gonna find admin");
+            
             user = await User.findOne({
                 role: "admin",
             });
-
+            // console.log("admin user is it",user);
+        }
+        
             await Ticket.findByIdAndUpdate(ticket._id, {
             assignedTo: user?._id || null,
             });
             return user;
-        }
-
+        
         })
-
+        // console.log("After assinging moderator");
         await step.run("send-email-to-moderator", async() => {
             if(moderator)
             {
@@ -98,7 +106,7 @@ export const onTicketCreated = inngest.createFunction(
         return {success: true}
     }
         catch (error) {
-            console.error("❌ Error running the step", err.message);
+            console.error("❌ Error running the step", error.message);
             return { success: false };
         }
         
