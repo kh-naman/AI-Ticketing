@@ -37,6 +37,10 @@ app.use("/api/inngest",serve({
     functions: [onUserSignup,onTicketCreated]
 }))
 
+app.get("/", (req, res) => {
+  res.send("hi naman");
+});
+
 mongoose
         .connect(process.env.MONGO_URI)
         .then(() => {

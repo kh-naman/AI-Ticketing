@@ -40,7 +40,7 @@ function Signup() {
       }
     } catch (error) {
       alert("Something went wrong");
-      console.error(err);
+      console.error(error);
     }
     finally {
       setLoading(false);
