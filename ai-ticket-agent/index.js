@@ -21,16 +21,18 @@ const app = express()
 // ];
 
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // or your domain instead of *
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  next();
-});
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'https://aiticketing.vercel.app',
+    'https://aiticketing-git-main-naman-khandelwals-projects-05a368a6.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
 
-app.options("*", (req, res) => {
-  res.sendStatus(200);
-});
+app.use(cors(corsOptions));
 
 // Explicit preflight support (for older environments)
 // app.options('/*', cors());
