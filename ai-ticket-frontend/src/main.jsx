@@ -1,7 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import CheckAuth from './components/CheckAuth.jsx'
 import Tickets from './pages/tickets.jsx'
@@ -9,10 +8,11 @@ import Ticket from './pages/ticket.jsx'
 import Login from './pages/login.jsx'
 import Signup from './pages/signup.jsx'
 import Admin from './pages/admin.jsx'
-
+import Navbar from './components/navbar.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
+      <Navbar/ >
       <Routes>
         <Route
           path = "/"
@@ -23,7 +23,7 @@ createRoot(document.getElementById('root')).render(
           }
         />
         <Route
-          path = "/tickets:id"
+          path = "/tickets/:id"
           element={
             <CheckAuth protectedRoute={true}>
               <Ticket />
