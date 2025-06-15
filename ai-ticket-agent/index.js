@@ -21,15 +21,21 @@ const app = express()
 // ];
 
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://aiticketing.vercel.app'
+];
+
 const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'https://aiticketing.vercel.app',
-    'https://aiticketing-git-main-naman-khandelwals-projects-05a368a6.vercel.app'
-  ],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
 };
 
 app.use(cors(corsOptions));
