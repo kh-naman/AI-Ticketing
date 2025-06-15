@@ -14,7 +14,25 @@ dotenv.config();
 const PORT = process.env.PORT || 3000
 const app = express()
 
-app.use(cors())
+
+const allowedOrigins = [
+  'http://localhost:5173', // for local dev
+  'https://aiticketing.vercel.app' // live frontend
+];
+
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like curl or Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS not allowed from this origin: ' + origin));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json())
 
 
