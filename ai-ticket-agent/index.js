@@ -32,7 +32,7 @@ mongoose
         .then(() => {
             console.log("MongoDB connected");
             app.listen(PORT,()=>{
-                console.log(`🧨 Server at http://localhost:${PORT}`);
+                console.log(`🧨 Server at ${PORT}`);
             })
                 
         })
