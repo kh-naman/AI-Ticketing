@@ -22,8 +22,14 @@ const app = express()
 
 
 app.use(cors({
-  origin: "*"
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true       // Optional: use only if your frontend sends cookies or auth headers
 }));
+
+// Explicit preflight support (for older environments)
+app.options('*', cors());
 
 app.use(express.json())
 
