@@ -15,33 +15,28 @@ const PORT = process.env.PORT || 3000
 const app = express()
 
 
-// const allowedOrigins = [
-//   'http://localhost:5173', // for local dev
-//   'https://aiticketing.vercel.app' // live frontend
-// ];
-
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://aiticketing.vercel.app'
-];
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed'));
-    }
-  },
+  origin: [
+    'http://localhost:5173',
+    'https://aiticketing.vercel.app'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'Referer',
+    'sec-ch-ua',
+    'sec-ch-ua-mobile',
+    'sec-ch-ua-platform',
+    'User-Agent'
+  ],
+  credentials: false // ✅ because you're using localStorage, not cookies
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions))
 
-// Explicit preflight support (for older environments)
-// app.options('/*', cors());
+// ✅ Must match same options for preflight
+app.options('*', cors(corsOptions))
 
 
 app.use(express.json())
