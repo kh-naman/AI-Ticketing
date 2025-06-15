@@ -4,9 +4,11 @@ import User from "../models/user.js"
 import {inngest} from "../inngest/client.js"
 
 export const signup = async (req,res) => {
+    console.log("Came inside sign up controller");
+    
     const {email,password,skills = []} = req.body
     try {
-        const hashedPassword = bcrypt.hash(password,10)
+        const hashedPassword = await bcrypt.hash(password,10)
         const user = await User.create({
             email,password:hashedPassword,skills
         })
@@ -33,23 +35,44 @@ export const signup = async (req,res) => {
 }
 
 export const login = async (req,res) =>{
+    // console.log("Inside login");
     const {email,password} = req.body
-
+    // console.log("email", email);
+    // console.log("password from req", password);
+    
+    
     try {
-        const userObject = User.findOne({email})
+        const userObject = await User.findOne({email})
 
         if(!userObject)
         {
             return res.status(401).json({error: "User not found"})
         }
+        else{
+            // console.log("Found user object");
+            
+        }
 
-        const isPasswordMatch = bcrypt.compare(password,userObject.password)
-
+        // console.log("password: ",password);
+        // console.log("userobjcet", userObject);
+        
+        // console.log("userobject password: ", userObject.password);
+        
+        
+        const isPasswordMatch = await bcrypt.compare(password,userObject.password)
+        // console.log("password match: ",isPasswordMatch);
+        
         if(!isPasswordMatch)
         {
             return res.status(401).json({error: "Invalid credentials" })
         }
-
+        
+        const token = jwt.sign(
+        { _id: userObject._id, role: userObject.role },
+        process.env.JWT_SECRET
+        );
+        
+        res.json({ userObject, token });
 
     } catch (error) {
         res.status(500).json({error: "Login failed",
@@ -91,7 +114,7 @@ export const updateUser = async (req,res) => {
 
         await User.updateOne(
             {email},
-            {skills: skills.length ? skills: user.skills }
+            {skills: skills.length ? skills: user.skills,role }
         )
 
         return res.json({message: "User updated successfuly"})
@@ -108,7 +131,7 @@ export const getUsers = async (req,res) => {
             return res.status(403).json({error: "Forbidden"})
         }
 
-        const users = User.find().select("-password")
+        const users = await User.find().select("-password")
         return res.json(users)
     } catch (error) {
         return res.status(500).json({error: "Getting users failed",details: error.message})
