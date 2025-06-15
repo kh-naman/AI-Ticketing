@@ -36,7 +36,7 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // ✅ Must match same options for preflight
-app.options('*', cors(corsOptions))
+// app.options('*', cors(corsOptions))
 
 
 app.use(express.json())
