@@ -8,7 +8,7 @@ import ticketRoutes from "./routes/ticket.js"
 import { inngest } from './inngest/client.js'
 import { onUserSignup } from './inngest/functions/on-signup.js'
 import { onTicketCreated } from './inngest/functions/on-ticket-create.js'
-
+dotenv.config();
 
 
 const PORT = process.env.PORT || 3000
@@ -17,7 +17,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-dotenv.config();
+
 
 app.use("/api/auth",userRoutes)
 app.use("/api/tickets",ticketRoutes)
