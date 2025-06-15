@@ -12,7 +12,7 @@ export const createTicket = async(req,res) => {
             })
         }
 
-        const newTicket = Ticket.create({
+        const newTicket = await Ticket.create({
             title,
             description,
             createdBy: req.user._id.toString()
@@ -42,13 +42,13 @@ export const getTickets = async (req,res) => {
         const user = req.user //assuming authenticate middleware will take care
         if(user.role !== "user")
         {
-            tickets = Ticket.find({})
+            tickets = await Ticket.find({})
             .populate("assignedTo", ["email", "_id"])
             .sort({ createdAt: -1 });
         }
         else
         {
-            tickets = Ticket.find({createdBy: user._id})
+            tickets = await Ticket.find({createdBy: user._id})
             .select("title description status createdAt")
             .sort({ createdAt: -1 });
         }
@@ -65,14 +65,15 @@ export const getTicket = async(req,res) => {
     
     try {
         const user = req.user
+        let ticket;
         const ticketId = req.params.id
 
         if(user.role !== "user")
         {
-            Ticket.findById(ticketId).populate(assignedTo,["email", "_id"])
+            ticket = await Ticket.findById(ticketId).populate("assignedTo",["email", "_id"])
         }
         else{
-            Ticket.findOne(
+            ticket = await Ticket.findOne(
                 {
                     createdBy: user._id,
                     _id: ticketId
@@ -83,7 +84,7 @@ export const getTicket = async(req,res) => {
         if (!ticket) {
         return res.status(404).json({ message: "Ticket not found" });
         }
-        return res.status(404).json({ ticket });
+        return res.status(200).json({ ticket });
     } catch (error) {
         console.error("Error fetching ticket", error.message);
         return res.status(500).json({ message: "Internal Server Error" });
