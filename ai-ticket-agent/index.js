@@ -40,7 +40,7 @@ app.use("/api/inngest",serve({
     functions: [onUserSignup,onTicketCreated]
 }))
 
-app.get("/", (req, res) => {
+app.get("/me", (req, res) => {
   res.send("hi naman");
 });
 

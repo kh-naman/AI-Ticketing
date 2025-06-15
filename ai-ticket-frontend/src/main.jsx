@@ -9,11 +9,20 @@ import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import Admin from './pages/Admin.jsx'
 import Navbar from './components/navbar.jsx'
+import Me from './pages/Me.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Navbar/ >
       <Routes>
+        <Route
+          path = "/me"
+          element={
+            <CheckAuth protectedRoute={false}>
+              <Me/>
+            </CheckAuth>
+          }
+        />
         <Route
           path = "/"
           element={
