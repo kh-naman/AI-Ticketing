@@ -12,6 +12,6 @@ router.post("/logout",logout)
 
 router.post("/update-user",authenticate,updateUser)
 
-router.post("/users",authenticate,getUsers)
+router.get("/users",authenticate,getUsers)
 
 export default router
