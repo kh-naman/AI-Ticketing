@@ -30,7 +30,7 @@ const corsOptions = {
     'sec-ch-ua-platform',
     'User-Agent'
   ],
-  credentials: false // ✅ because you're using localStorage, not cookies
+  
 };
 
 app.use(cors(corsOptions))
@@ -46,10 +46,10 @@ app.use(express.json())
 app.use("/api/auth",userRoutes)
 app.use("/api/tickets",ticketRoutes)
 
-app.use("/api/inngest",serve({
-    client: inngest,
-    functions: [onUserSignup,onTicketCreated]
-}))
+// app.use("/api/inngest",serve({
+//     client: inngest,
+//     functions: [onUserSignup,onTicketCreated]
+// }))
 
 app.get("/", (req, res) => {
   res.send("hi naman");
